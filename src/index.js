@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
+import { v4 as uuidv4 } from 'uuid';
 
 import users from '../db/users';
 import messages from '../db/messages';
@@ -8,6 +9,12 @@ import messages from '../db/messages';
 const app = express();
 
 app.use(cors());
+
+// Accessing the payload of an HTTP POST request is provided within
+// Express with its built-in middleware which is based on body-parser.
+// It enables us to transform body types from our request object (e.g. json, urlencoded)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // This extracts the entire body portion of an incoming request stream and makes it accessible on req.body
 
 // example routes
 
@@ -65,6 +72,16 @@ app.get('/messages', (req, res) => {
 
 app.get('/messages/:messageId', (req, res) => {
     return res.send(messages[req.params.messageId]);
+});
+
+app.post('/messages', (req, res) => {
+    const id = uuidv4();
+    const message = {
+        id,
+        text: req.body.text,
+    };
+    messages[id] = message;
+    return res.send(message);
 });
 
 app.listen(process.env.PORT, () =>
