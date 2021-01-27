@@ -7,7 +7,23 @@ const app = express();
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    // curl
+    return res.send('Received a GET HTTP method');
+});
+
+app.post('/', (req, res) => {
+    // curl -X POST
+    return res.send('Received a POST HTTP method');
+});
+
+app.put('/', (req, res) => {
+    // curl -X PUT
+    return res.send('Received a PUT HTTP method');
+});
+
+app.delete('/', (req, res) => {
+    // curl -X DELETE
+    return res.send('Received a DELETE HTTP method');
 });
 
 app.listen(process.env.PORT, () =>
