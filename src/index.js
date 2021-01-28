@@ -16,6 +16,18 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // This extracts the entire body portion of an incoming request stream and makes it accessible on req.body
 
+// A middleware is just a JavaScript function which has access to three arguments: req, res, next.
+// Template:
+// app.use((req, res, next) => {
+  // do something
+  // next();
+// });
+app.use((req, res, next) => {
+    req.me = users[1];
+    next();
+});
+
+
 // example routes
 
 app.get('/', (req, res) => {
@@ -79,9 +91,23 @@ app.post('/messages', (req, res) => {
     const message = {
         id,
         text: req.body.text,
+        userId: req.me.id,
     };
     messages[id] = message;
     return res.send(message);
+});
+
+app.delete('/messages/:messageId', (req, res) => {
+    const {
+        [req.params.messageId]: message,
+        ...otherMessages
+    } = messages;
+    messages = otherMessages;
+    return res.send(message);
+});
+
+app.get('/session', (req, res) => {
+    return res.send(users[req.me.id]);
 });
 
 app.listen(process.env.PORT, () =>
